@@ -7,11 +7,10 @@ image_resource:
     repository: colstrom/alpine
 
 inputs:
-  - name: process
-    path: ci
+  - name: command
 
 outputs:
   - name: archive
 
 run:
-  path: ci/command/fetch-archive
+  path: command/fetch-archive
