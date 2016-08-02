@@ -17,3 +17,4 @@ run:
   path: process/command/prepare-build-context
   args:
     - prepared
+    - process/image/riemann/release/Dockerfile
