@@ -1,0 +1,12 @@
+---
+platform: linux
+
+inputs:
+  - name: build-process
+    path: ci
+
+outputs:
+  - name: archive
+
+run:
+  path: ci/command/fetch-archive
