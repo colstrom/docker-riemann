@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -o nounset
+
+if test "${TRACE:-false}" != 'false'
+then
+    set -o xtrace
+fi
+
+WORKDIR=${WORKDIR:-${PWD}}
+
+for COMMAND_PATH in /command ${WORKDIR}/command
+do
+    if test -d "${COMMAND_PATH}"
+    then
+        PATH=${COMMAND_PATH}:${PATH}
+    fi
+done
+
+ARCHIVE_ROOT=${1:-${ARCHIVE_ROOT:-'archive'}}
+DOWNLOADER=${DOWNLOADER:-'wget'}
+
+mkdir -p "${WORKDIR}/${ARCHIVE_ROOT}"
+
+cd "${WORKDIR}/${ARCHIVE_ROOT}" || exit 101
+
+URL=$(construct-download-url)
+
+test -f "$(basename "${URL}")" || eval "${DOWNLOADER}" "${URL}"
