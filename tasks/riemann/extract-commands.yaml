@@ -13,6 +13,7 @@ outputs:
   - name: command
 
 run:
-  path: sh
+  path: process/command/duplicate
   args:
-    - -c 'tar cC process/command . | tar xC command'
+    - process/command
+    - command
