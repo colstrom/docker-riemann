@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -o nounset
+
+if test "${TRACE:-false}" != 'false'
+then
+    set -o xtrace
+fi
+
+WORKDIR=${WORKDIR:-${PWD}}
+
+for COMMAND_PATH in /command ${WORKDIR}/command
+do
+    if test -d "${COMMAND_PATH}"
+    then
+        PATH=${COMMAND_PATH}:${PATH}
+    fi
+done
+
+ORIGIN=${ORIGIN:-'aphyr.com'}
+VERSION=${VERSION:-$(find-latest-github-release riemann/riemann)}
+PREFIX=${PREFIX:-'riemann/riemann'}
+SUFFIX=${SUFFIX:-'tar.bz2'}
+
+URL="https://${ORIGIN}/${PREFIX}-${VERSION}.${SUFFIX}"
+
+printf "%s\n" "${URL}"
