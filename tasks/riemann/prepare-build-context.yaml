@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: colstrom/alpine
+
+inputs:
+  - name: process
+  - name: archive
+
+outputs:
+  - name: prepared
+
+run:
+  path: process/command/prepare-build-context
+  args:
+    - prepared
