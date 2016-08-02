@@ -4,7 +4,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: colstrom/alpine
+    repository: colstrom/riemann
+    tag: build
 
 inputs:
   - name: command
