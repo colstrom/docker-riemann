@@ -8,9 +8,20 @@ then
 fi
 
 WORKDIR=${WORKDIR:-${PWD}}
+cd "${WORKDIR}" || exit 101
+
 DESTINATION=${1:-${DESTINATION:-'out'}}
+mkdir -p "${DESTINATION}"
+
+DOCKERFILE=${2:-DOCKERFILE:-'Dockerfile'}
+
+if test -f "${DOCKERFILE}"
+then
+    cp "${DOCKERFILE}" "${DESTINATION}"
+    cp -r "$(dirname "${DOCKERFILE}")"/* "${DESTINATION}"
+fi
 
 find "${WORKDIR}" -type d -mindepth 1 -maxdepth 1 -exec basename '{}' \; | grep -v "^${DESTINATION}\$" | while read -r INPUT
 do
-    echo cp -r "${WORKDIR}/${INPUT}" "${WORKDIR}/${DESTINATION}/${INPUT}"
+    cp -r "${INPUT}" "${DESTINATION}/${INPUT}"
 done
