@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -o errexit -o nounset -o xtrace
+
+ARCHIVE_ROOT=${ARCHIVE_ROOT:-'/archive'}
+PACKAGE_ROOT=${PACKAGE_ROOT:-'/package'}
+NAMESPACE=${NAMESPACE:-'net'}
+
+mkdir -p "${PACKAGE_ROOT}/${NAMESPACE}"
+
+if test -d "${ARCHIVE_ROOT}"
+then
+    for ARCHIVE in ${ARCHIVE_ROOT}/*
+    do
+        tar -x -f "${ARCHIVE}" -C "${PACKAGE_ROOT}/${NAMESPACE}"
+    done
+fi
+
+for PACKAGE in ${PACKAGE_ROOT}/${NAMESPACE}/*
+do
+    SLOT=$(echo "${PACKAGE}" | sed -E 's/-[[:digit:]\.]+$//')
+    ln -sf "${PACKAGE}" "${SLOT}"
+done
