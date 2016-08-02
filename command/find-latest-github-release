@@ -1,0 +1,82 @@
+#!/bin/sh
+
+# The MIT License (MIT)
+# Copyright (c) 2016 Chris Olstrom <chris@olstrom.com>
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+set -o nounset
+
+if test "${TRACE:-false}" != 'false'
+then
+   set -o xtrace
+fi
+
+WORKDIR=${WORKDIR:-${PWD}}
+API_ENDPOINT=${API_ENDPOINT:-'api.github.com'}
+
+REPOSITORY=${1:-${REPOSITORY:-$(test -f "${WORKDIR}/repository" && cat "${WORKDIR}/repository")}}
+
+api() {
+    wget -qO - "https://${API_ENDPOINT}/${1}"
+}
+
+latest_release() {
+    api "repos/${1}/releases" | jq --exit-status --raw-output first.name//empty
+}
+
+latest_tag() {
+    api "repos/${1}/tags" | jq --exit-status --raw-output first.name//empty
+}
+
+latest() {
+    latest_release "${1}" || latest_tag "${1}"
+}
+
+usage() {
+    cat >&2 <<EOF
+
+    Operator Error!
+
+    No repository given. Refusing nonsensical query of "latest version of
+    nothing". You can specify the repository in any of the following ways:
+
+    - A commandline argument. Example:
+
+        ${0} owner/repository
+
+    - The REPOSITORY environment variable. Example:
+
+        env REPOSITORY=owner/repository ${0}
+
+    - A "repository" file in the working directory. Example:
+
+        echo owner/repository | tee repository
+        ${0}
+
+EOF
+}
+
+if test -n "${REPOSITORY}"
+then
+    latest "${REPOSITORY}"
+else
+    usage
+    exit 111
+fi
