@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -o nounset
+
+if test "${TRACE:-false}" != 'false'
+then
+    set -o xtrace
+fi
+
+WORKDIR=${WORKDIR:-${PWD}}
+IN=${1:-${IN:-'in'}}
+OUT=${2:-${OUT:-'out'}}
+
+test -d "${WORKDIR}/${IN}" || exit 100
+
+mkdir -p "${WORKDIR}/${OUT}"
+
+tar cC "${WORKDIR}/${IN}" . | tar xC "${WORKDIR}/${OUT}"
