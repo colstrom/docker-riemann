@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -o nounset
+
+if test "${TRACE:-false}" != 'false'
+then
+    set -o xtrace
+fi
+
+WORKDIR=${WORKDIR:-${PWD}}
+DESTINATION=${1:-${DESTINATION:-'out'}}
+
+find "${WORKDIR}" -type d -mindepth 1 -maxdepth 1 -exec basename '{}' \; | grep -v "^${DESTINATION}\$" | while read -r INPUT
+do
+    echo cp -r "${WORKDIR}/${INPUT}" "${WORKDIR}/${DESTINATION}/${INPUT}"
+done
