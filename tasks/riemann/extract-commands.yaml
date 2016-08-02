@@ -15,4 +15,4 @@ outputs:
 run:
   path: sh
   args:
-    - -c tar -c -f - -C command . | tar -x -f - -C process
+    - -c tar -c -f - -C process/command . | tar -x -f - -C command
